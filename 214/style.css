@@ -1,0 +1,40 @@
+/* 祝福语五颜六色动画 */
+@keyframes rainbowText {
+  0% { color: red; }
+  14% { color: orange; }
+  42% { color: green; }
+  85% { color: violet; }
+  100% { color: red; }
+}
+
+.message-container {
+  text-align: center;
+  font-size: 40px;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+}
+
+.message-container span {
+  display: inline-block;
+  font-size: 40px;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  animation: rainbowText 5s infinite linear;
+}
+
+@keyframes partRainbowText {
+  0% { color: red; }
+  42% { color: green; }
+  85% { color: violet; }
+  100% { color: red; }
+}
+
+.loading-init__status {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  animation: partRainbowText 3s infinite linear;
+}
