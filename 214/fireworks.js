@@ -32,8 +32,8 @@ let stageW, stageH
 // All quality globals will be overwritten and updated via `configDidUpdate`.
 let quality = 1
 let isLowQuality = false
-let isNormalQuality = true
-let isHighQuality = false
+let isNormalQuality = false
+let isHighQuality = true
 
 const QUALITY_LOW = 1
 const QUALITY_NORMAL = 2
@@ -2225,6 +2225,11 @@ const soundManager = {
    * @param  {?number} scalewill  Note that a scale of 0 will mute the sound.
    */
   playSound(type, scale = 1) {
+    // Add iOS check
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    if (isIOS && this.ctx.state === 'suspended') {
+      this.ctx.resume()
+    }
     scale = MyMath.clamp(scale, 0, 1)
 
     if (!canPlaySoundSelector() || simSpeed < 0.95) {
