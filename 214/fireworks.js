@@ -787,6 +787,19 @@ const shellTypes = {
 
 const shellNames = Object.keys(shellTypes)
 
+// Add this function to handle user interactions for playing sound
+function enableSoundOnMobile() {
+  if (IS_MOBILE) {
+    document.body.addEventListener(
+      'touchstart',
+      () => {
+        toggleSound(true)
+      },
+      { once: true }
+    )
+  }
+}
+
 function init(callback) {
   // Remove loading state
   document.querySelector('.loading-init').remove()
@@ -838,12 +851,15 @@ function init(callback) {
   // Begin simulation
   togglePause(false)
   toggleSound(true)
+  toggleFullscreen()
   // initial render
   renderApp(store.state)
 
   configDidUpdate()
   console.info('typeof callback', typeof callback)
   callback && callback()
+  // Enable sound on mobile devices
+  enableSoundOnMobile()
 }
 
 function fitShellPositionInBoundsH(position) {
@@ -2261,10 +2277,10 @@ const personalConfig = {
   greeting: '祝: 独角兽女士/李宝儿妈妈情人节快乐',
   quizTips: '答题赢取千元现金红包',
   quizResult: '凭此密码领取千元🧧',
-  delayToGreet: 8e3,
+  delayToGreet: 10e3,
 }
 
-function displayMessage(msg, callback, cbInterval, speed) {
+function displayMessage(msg, callback, cbInterval, speed, needClear) {
   const messageContainer = document.getElementById('message')
   messageContainer.innerHTML = '' // Clear the container
   let i = 0
@@ -2278,6 +2294,11 @@ function displayMessage(msg, callback, cbInterval, speed) {
       i++
       setTimeout(showNextLetter, speed || 200) // Control the appearance time of each letter
     } else {
+      if (needClear) {
+        setTimeout(() => {
+          messageContainer.innerHTML = ''
+        }, 1000)
+      }
       setTimeout(() => {
         if (callback) {
           callback()
@@ -2290,16 +2311,29 @@ function displayMessage(msg, callback, cbInterval, speed) {
 }
 
 function showQuizTips() {
-  displayMessage(personalConfig.quizTips, () => {
-    document.getElementById('popup').style.display = 'block' // Show popup
-  }, undefined, 100)
+  displayMessage(
+    personalConfig.quizTips,
+    () => {
+      document.getElementById('popup').style.display = 'block' // Show popup
+    },
+    undefined,
+    100
+  )
 }
 
 function delayToGreet() {
   // trigger click body
-  setTimeout(() => {
-    displayMessage(personalConfig.greeting, showQuizTips, 3e3)
-  }, personalConfig.delayToGreet)
+  displayMessage(
+    personalConfig.welcomeGreeting,
+    showGreeting,
+    personalConfig.delayToGreet,
+    undefined,
+    true
+  )
+}
+
+function showGreeting() {
+  displayMessage(personalConfig.greeting, showQuizTips, 4e3)
 }
 
 const quizConfig = [
@@ -2380,10 +2414,10 @@ const quizConfig = [
 ]
 
 if (IS_HEADER) {
-  setLoadingStatus(personalConfig.welcomeGreeting)
-  init()
+  // setLoadingStatus(personalConfig.welcomeGreeting)
+  init(delayToGreet)
 } else {
-  setLoadingStatus(personalConfig.welcomeGreeting)
+  // setLoadingStatus(personalConfig.welcomeGreeting)
   setTimeout(() => {
     soundManager.preload().then(
       () => init(delayToGreet),
@@ -2418,13 +2452,15 @@ function showQuizModal() {
   const positiveButton = document.createElement('button')
   positiveButton.textContent = currentQuestion.positiveProps.label
   const answer = currentQuestion.correctAnswer
-  positiveButton.onclick = () => handleQuizAnswer(currentQuestion.positiveProps.value === answer)
+  positiveButton.onclick = () =>
+    handleQuizAnswer(currentQuestion.positiveProps.value === answer)
 
   const negativeButton = document.createElement('button')
   negativeButton.textContent = currentQuestion.negativeProps.label
-  negativeButton.onclick = () => handleQuizAnswer(currentQuestion.negativeProps.value === answer)
+  negativeButton.onclick = () =>
+    handleQuizAnswer(currentQuestion.negativeProps.value === answer)
 
-  if(currentQuestion.positiveProps.index === 1) {
+  if (currentQuestion.positiveProps.index === 1) {
     quizOptions.appendChild(positiveButton)
     quizOptions.appendChild(negativeButton)
   } else {
