@@ -8,17 +8,17 @@ body {
   height: 100%;
 }
 
-html {
+/* html {
   background-color: #000;
-}
+} */
 
-body {
+/* body {
   overflow: hidden;
   color: rgba(255, 255, 255, 0.5);
   font-family: "Russo One", arial, sans-serif;
   line-height: 1.25;
   letter-spacing: 0.06em;
-}
+} */
 
 .hide {
   opacity: 0;
@@ -51,7 +51,7 @@ body {
 }
 .loading-init__status {
   margin-top: 1em;
-  font-size: 0.8em;
+  font-size: 1.5em;
   opacity: 0.75;
 }
 
@@ -103,7 +103,7 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.42);
+  /* background-color: rgba(0, 0, 0, 0.42); */
   transition: opacity 0.3s, visibility 0.3s;
 }
 .menu__inner-wrap {
