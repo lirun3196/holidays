@@ -2330,33 +2330,6 @@ let currentImageIndex = 0
 let slideshowInterval = null
 let imagesPreloaded = false
 
-// Preload images function
-function preloadImages() {
-  return new Promise((resolve) => {
-    let loadedCount = 0
-    const totalImages = imageConfig.length
-    
-    imageConfig.forEach(src => {
-      const img = new Image()
-      img.onload = () => {
-        loadedCount++
-        if (loadedCount === totalImages) {
-          imagesPreloaded = true
-          resolve()
-        }
-      }
-      img.onerror = () => {
-        loadedCount++
-        if (loadedCount === totalImages) {
-          imagesPreloaded = true
-          resolve()
-        }
-      }
-      img.src = src
-    })
-  })
-}
-
 function startImageSlideshow() {
   const slideshowContainer = document.getElementById('image-slideshow')
   const slideshowImage = document.getElementById('slideshow-image')
@@ -2369,8 +2342,6 @@ function startImageSlideshow() {
     span.style.fontSize = '24px'
   })
   
-  // Preload images first, then start slideshow
-  preloadImages().then(() => {
     // Show the first image immediately
     currentImageIndex = 0
     slideshowImage.src = imageConfig[currentImageIndex]
@@ -2405,7 +2376,6 @@ function startImageSlideshow() {
         slideshowImage.style.animation = 'slideIn 0.6s ease-out'
       }, 50)
     }, 3000) // Change every 3 seconds
-  })
 }
 
 function showFinalMessage() {
