@@ -2444,15 +2444,15 @@ function showGreeting() {
 
 // 这里的路径是html文件相对于images文件夹的
 const imageConfig = [
-  '/816/images/IMG_3202.jpeg',
-  '/816/images/IMG_3374.jpeg',
-  '/816/images/IMG_3614.jpeg',
-  '/816/images/IMG_4634.jpeg',
-  '/816/images/IMG_4637.jpeg',
-  '/816/images/IMG_4638.jpeg',
-  '/816/images/IMG_4640.jpeg',
-  '/816/images/IMG_5467.jpg',
-  '/816/images/hand-foot.jpg',
+  '816/images/IMG_3202.jpeg',
+  '816/images/IMG_3374.jpeg',
+  '816/images/IMG_3614.jpeg',
+  '816/images/IMG_4634.jpeg',
+  '816/images/IMG_4637.jpeg',
+  '816/images/IMG_4638.jpeg',
+  '816/images/IMG_4640.jpeg',
+  '816/images/IMG_5467.jpg',
+  '816/images/hand-foot.jpg',
 ]
 
 if (IS_HEADER) {
