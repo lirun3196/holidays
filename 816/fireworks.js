@@ -2278,10 +2278,10 @@ function setLoadingStatus(status) {
 }
 
 const personalConfig = {
-  welcomeGreeting: '王总专属烟花表演',
-  greeting: '祝: 独角兽女士/李宝儿妈妈情人节快乐',
-  quizTips: '答题赢取千元现金红包',
-  quizResult: '凭此密码领取千元🧧',
+  welcomeGreeting: '妈妈专属烟花表演',
+  greeting: '祝: 妈妈生日快乐，健康长寿，青春永驻',
+  quizTips: '❤️来自妈妈的爱❤️',
+  quizResult: '有这样的妈妈的孩子是个宝',
   delayToGreet: 10e3,
 }
 
@@ -2319,11 +2319,112 @@ function showQuizTips() {
   displayMessage(
     personalConfig.quizTips,
     () => {
-      document.getElementById('popup').style.display = 'block' // Show popup
+      startImageSlideshow() // Start showing images after quiz tips
     },
     undefined,
     100
   )
+}
+
+let currentImageIndex = 0
+let slideshowInterval = null
+let imagesPreloaded = false
+
+// Preload images function
+function preloadImages() {
+  return new Promise((resolve) => {
+    let loadedCount = 0
+    const totalImages = imageConfig.length
+    
+    imageConfig.forEach(src => {
+      const img = new Image()
+      img.onload = () => {
+        loadedCount++
+        if (loadedCount === totalImages) {
+          imagesPreloaded = true
+          resolve()
+        }
+      }
+      img.onerror = () => {
+        loadedCount++
+        if (loadedCount === totalImages) {
+          imagesPreloaded = true
+          resolve()
+        }
+      }
+      img.src = src
+    })
+  })
+}
+
+function startImageSlideshow() {
+  const slideshowContainer = document.getElementById('image-slideshow')
+  const slideshowImage = document.getElementById('slideshow-image')
+  const messageContainer = document.querySelector('.message-container')
+  
+  // Change message container position and font size before showing images
+  messageContainer.style.top = '50px'
+  const messageSpans = messageContainer.querySelectorAll('span')
+  messageSpans.forEach(span => {
+    span.style.fontSize = '24px'
+  })
+  
+  // Preload images first, then start slideshow
+  preloadImages().then(() => {
+    // Show the first image immediately
+    currentImageIndex = 0
+    slideshowImage.src = imageConfig[currentImageIndex]
+    slideshowContainer.classList.remove('hide')
+    
+    let imagePlayCount = 1 // Track how many images have been shown
+    
+    // Change image every 3 seconds
+    slideshowInterval = setInterval(() => {
+      currentImageIndex = (currentImageIndex + 1) % imageConfig.length
+      imagePlayCount++
+      
+      // Check if we've shown all images once
+      if (imagePlayCount > imageConfig.length) {
+        clearInterval(slideshowInterval)
+        slideshowContainer.classList.add('hide')
+        
+        // Restore original position
+        messageContainer.style.top = '30%'
+        
+        // Add a small delay before showing final message
+        setTimeout(() => {
+          showFinalMessage()
+        }, 1000)
+        return
+      }
+      
+      // Trigger animation by removing and re-adding the image
+      slideshowImage.style.animation = 'none'
+      setTimeout(() => {
+        slideshowImage.src = imageConfig[currentImageIndex]
+        slideshowImage.style.animation = 'slideIn 0.6s ease-out'
+      }, 50)
+    }, 3000) // Change every 3 seconds
+  })
+}
+
+function showFinalMessage() {
+  const messageContainer = document.querySelector('.message-container')
+  
+  // Clear the message container and restore position
+  // messageContainer.innerHTML = ''
+  messageContainer.style.top = '30%'
+
+  // Display the final message with proper timing
+  displayMessage(personalConfig.quizResult, () => {
+    // After message is fully displayed, ensure font size is correct
+    setTimeout(() => {
+      const messageSpans = messageContainer.querySelectorAll('span')
+      messageSpans.forEach(span => {
+        span.style.fontSize = '40px'
+      })
+    }, 100)
+  }, 2000, 150)
 }
 
 function delayToGreet() {
@@ -2338,84 +2439,19 @@ function delayToGreet() {
 }
 
 function showGreeting() {
-  displayMessage(personalConfig.greeting, showQuizTips, 4e3)
+  displayMessage(personalConfig.greeting, showQuizTips, 10e3)
 }
 
-const quizConfig = [
-  {
-    question: '你很乖吗？',
-    negativeProps: {
-      label: '夜壶尿罐',
-      value: 0,
-    },
-    positiveProps: {
-      label: '仙女',
-      value: 1,
-    },
-    correctAnswer: 1,
-  },
-  {
-    question: '你很贤惠吗？',
-    positiveProps: {
-      label: '秀外慧中',
-      value: 1,
-      index: 1,
-    },
-    negativeProps: {
-      label: '河东狮吼',
-      value: 0,
-    },
-    correctAnswer: 1,
-  },
-  {
-    question: '你很持家吗？',
-    negativeProps: {
-      label: '挥金如土',
-      value: 0,
-    },
-    positiveProps: {
-      label: '持家有道',
-      value: 1,
-    },
-    correctAnswer: 1,
-  },
-  {
-    question: '你很会做饭吗？',
-    positiveProps: {
-      label: '王大厨',
-      value: 1,
-      index: 1,
-    },
-    negativeProps: {
-      label: '狗不理',
-      value: 0,
-    },
-    correctAnswer: 1,
-  },
-  {
-    question: '爱李大爷吗？',
-    positiveProps: {
-      label: '魂牵梦萦',
-      value: 1,
-    },
-    negativeProps: {
-      label: '同床异梦',
-      value: 0,
-    },
-    correctAnswer: 1,
-  },
-  {
-    question: '开心吗？',
-    negativeProps: {
-      label: '郁郁寡欢',
-      value: 0,
-    },
-    positiveProps: {
-      label: '心花怒放',
-      value: 1,
-    },
-    correctAnswer: 1,
-  },
+const imageConfig = [
+  'images/IMG_3202.jpeg',
+  'images/IMG_3374.jpeg',
+  'images/IMG_3614.jpeg',
+  'images/IMG_4634.jpeg',
+  'images/IMG_4637.jpeg',
+  'images/IMG_4638.jpeg',
+  'images/IMG_4640.jpeg',
+  'images/IMG_5467.jpg',
+  'images/hand-foot.jpg',
 ]
 
 if (IS_HEADER) {
@@ -2433,114 +2469,4 @@ if (IS_HEADER) {
       }
     )
   }, 0)
-}
-
-const wrongAnswers = []
-let currentQuestionIndex = 0
-
-function showQuizTips() {
-  displayMessage(personalConfig.quizTips, () => {
-    document.getElementById('message').innerHTML = ''
-    showQuizModal()
-  })
-}
-
-function showQuizModal() {
-  const quizModal = document.getElementById('quiz-modal')
-  const quizQuestion = document.getElementById('quiz-question')
-  const quizOptions = document.getElementById('quiz-options')
-
-  const currentQuestion = quizConfig[currentQuestionIndex]
-  quizQuestion.textContent = currentQuestion.question
-  quizOptions.innerHTML = ''
-
-  const positiveButton = document.createElement('button')
-  positiveButton.textContent = currentQuestion.positiveProps.label
-  const answer = currentQuestion.correctAnswer
-  positiveButton.onclick = () =>
-    handleQuizAnswer(currentQuestion.positiveProps.value === answer)
-
-  const negativeButton = document.createElement('button')
-  negativeButton.textContent = currentQuestion.negativeProps.label
-  negativeButton.onclick = () =>
-    handleQuizAnswer(currentQuestion.negativeProps.value === answer)
-
-  if (currentQuestion.positiveProps.index === 1) {
-    quizOptions.appendChild(positiveButton)
-    quizOptions.appendChild(negativeButton)
-  } else {
-    quizOptions.appendChild(negativeButton)
-    quizOptions.appendChild(positiveButton)
-  }
-  quizModal.classList.remove('hide')
-}
-
-function handleQuizAnswer(isPositive) {
-  const currentQuestion = quizConfig[currentQuestionIndex]
-  const isCorrect = isPositive === (currentQuestion.correctAnswer === 1)
-
-  const quizModal = document.getElementById('quiz-modal')
-  quizModal.classList.add('hide')
-
-  if (!isCorrect) {
-    wrongAnswers.push(currentQuestionIndex)
-    togglePause(true) // Pause the fireworks
-    showHeartBreakingAnimation()
-  } else {
-    nextQuestion()
-  }
-}
-
-function showHeartBreakingAnimation() {
-  const heartBreaking = document.getElementById('heart-breaking')
-  heartBreaking.classList.remove('hide')
-  console.log('Heart-breaking animation started')
-
-  setTimeout(() => {
-    heartBreaking.classList.add('hide')
-    console.log('Heart-breaking animation ended')
-    togglePause(false) // Resume the fireworks
-    nextQuestion()
-  }, 3000)
-}
-
-function nextQuestion() {
-  currentQuestionIndex++
-  if (currentQuestionIndex < quizConfig.length) {
-    showQuizModal()
-  } else {
-    endQuiz()
-  }
-}
-
-function endQuiz() {
-  toggleFinaleMode(true)
-  setTimeout(() => {
-    showFinalResult()
-  }, 13e3)
-}
-
-function showFinalResult() {
-  const quizModal = document.getElementById('quiz-modal')
-  const quizQuestion = document.getElementById('quiz-question')
-  const quizOptions = document.getElementById('quiz-options')
-
-  const code = `0820-0506-${wrongAnswers.join('') || 0}`
-  const result = `${personalConfig.quizResult}: ${code}`
-  quizQuestion.textContent = result
-  quizOptions.innerHTML = ''
-
-  const copyButton = document.createElement('button')
-  copyButton.textContent = '复制'
-  copyButton.onclick = () => {
-    navigator.clipboard.writeText(code)
-  }
-
-  quizOptions.appendChild(copyButton)
-
-  quizModal.classList.remove('hide')
-}
-
-function toggleFinaleMode(enable) {
-  store.setState({ config: { ...store.state.config, finale: enable } })
 }
