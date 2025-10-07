@@ -2442,16 +2442,17 @@ function showGreeting() {
   displayMessage(personalConfig.greeting, showQuizTips, 10e3)
 }
 
+// 这里的路径是html文件相对于images文件夹的
 const imageConfig = [
-  'images/IMG_3202.jpeg',
-  'images/IMG_3374.jpeg',
-  'images/IMG_3614.jpeg',
-  'images/IMG_4634.jpeg',
-  'images/IMG_4637.jpeg',
-  'images/IMG_4638.jpeg',
-  'images/IMG_4640.jpeg',
-  'images/IMG_5467.jpg',
-  'images/hand-foot.jpg',
+  '/816/images/IMG_3202.jpeg',
+  '/816/images/IMG_3374.jpeg',
+  '/816/images/IMG_3614.jpeg',
+  '/816/images/IMG_4634.jpeg',
+  '/816/images/IMG_4637.jpeg',
+  '/816/images/IMG_4638.jpeg',
+  '/816/images/IMG_4640.jpeg',
+  '/816/images/IMG_5467.jpg',
+  '/816/images/hand-foot.jpg',
 ]
 
 if (IS_HEADER) {
